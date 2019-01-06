@@ -1,0 +1,49 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Projectile.gd" type="Script" id=1]
+[ext_resource path="res://projectile.png" type="Texture" id=2]
+
+[node name="Projectile" type="Node2D"]
+
+modulate = Color( 0, 0, 0, 1 )
+script = ExtResource( 1 )
+_sections_unfolded = [ "Transform", "Visibility" ]
+
+[node name="Area" type="Area2D" parent="." index="0"]
+
+input_pickable = true
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+collision_layer = 4
+collision_mask = 3
+audio_bus_override = false
+audio_bus_name = "Master"
+_sections_unfolded = [ "Collision", "Transform", "Visibility" ]
+
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="Area" index="0"]
+
+build_mode = 0
+polygon = PoolVector2Array( 0.509122, -2.5034, 0.509122, -1.51456, 1.49658, -1.51282, 1.49658, -0.503258, 2.49336, -0.503258, 2.49336, 0.506306, 1.49796, 0.50475, 1.49796, 1.50399, 0.498713, 1.50399, 0.498713, 2.49283, -0.500532, 2.49283, -0.500532, 1.49359, -1.49378, 1.4967, -1.49378, 0.506306, -2.48861, 0.50475, -2.48861, -0.515314, -1.50017, -0.509647, -1.50017, -1.51282, -0.510942, -1.51456, -0.510942, -2.5034 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="Sprite" type="Sprite" parent="Area" index="1"]
+
+position = Vector2( 0.489214, 0.489213 )
+texture = ExtResource( 2 )
+_sections_unfolded = [ "Animation", "Offset", "Region", "Transform", "Visibility" ]
+
+[node name="VisibilityNotifier2D" type="VisibilityNotifier2D" parent="Area" index="2"]
+
+rect = Rect2( -2.5, -2.5, 5, 5 )
+
+[connection signal="area_entered" from="Area" to="." method="_on_area_entered"]
+
+[connection signal="body_entered" from="Area" to="." method="_on_body_entered"]
+
+[connection signal="screen_entered" from="Area/VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_entered"]
+
+[connection signal="screen_exited" from="Area/VisibilityNotifier2D" to="." method="_on_VisibilityNotifier2D_screen_exited"]
+
+
