@@ -3,15 +3,13 @@
 [ext_resource path="res://PistolGuy.gd" type="Script" id=1]
 [ext_resource path="res://character.png" type="Texture" id=2]
 
-[sub_resource type="RectangleShape2D" id=3]
+[sub_resource type="RectangleShape2D" id=1]
 
 custom_solver_bias = 0.0
 extents = Vector2( 8, 29 )
 
 [node name="Enemy" type="KinematicBody2D"]
 
-editor/display_folded = true
-position = Vector2( 182.355, 131.231 )
 input_pickable = false
 collision_layer = 2
 collision_mask = 1
@@ -19,11 +17,17 @@ collision/safe_margin = 0.08
 script = ExtResource( 1 )
 _sections_unfolded = [ "Collision", "Pickable", "Transform" ]
 AI = true
+maxSpeed = 40
+shotSpeed = 3.0
+damage = 1.0
+health = 5
+shotCooldown = 1.5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." index="0"]
 
-position = Vector2( 0, 3 )
-shape = SubResource( 3 )
+position = Vector2( 0, 10 )
+scale = Vector2( 1, 0.76 )
+shape = SubResource( 1 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="Sprite" type="Sprite" parent="." index="1"]
@@ -31,11 +35,10 @@ _sections_unfolded = [ "Transform" ]
 scale = Vector2( 2, 2 )
 texture = ExtResource( 2 )
 hframes = 7
+frame = 6
 _sections_unfolded = [ "Animation", "Offset", "Transform" ]
 
 [node name="Rays" type="Node2D" parent="." index="2"]
-
-editor/display_folded = true
 
 [node name="leftGround" type="RayCast2D" parent="Rays" index="0"]
 
@@ -61,7 +64,39 @@ exclude_parent = true
 cast_to = Vector2( -10, 0 )
 collision_mask = 1
 
-[node name="rightWall" type="RayCast2D" parent="Rays" index="3"]
+[node name="leftUp" type="RayCast2D" parent="Rays" index="3"]
+
+position = Vector2( -33.6767, -35.885 )
+enabled = false
+exclude_parent = true
+cast_to = Vector2( -50, -50 )
+collision_mask = 3
+
+[node name="leftDown" type="RayCast2D" parent="Rays" index="4"]
+
+position = Vector2( -38.9196, 30.7414 )
+enabled = false
+exclude_parent = true
+cast_to = Vector2( -50, 50 )
+collision_mask = 3
+
+[node name="rightDown" type="RayCast2D" parent="Rays" index="5"]
+
+position = Vector2( 40.6117, 31.2397 )
+enabled = false
+exclude_parent = true
+cast_to = Vector2( 50, 50 )
+collision_mask = 3
+
+[node name="rightUp" type="RayCast2D" parent="Rays" index="6"]
+
+position = Vector2( 34.7809, -35.517 )
+enabled = false
+exclude_parent = false
+cast_to = Vector2( 50, -50 )
+collision_mask = 3
+
+[node name="rightWall" type="RayCast2D" parent="Rays" index="7"]
 
 position = Vector2( 16.7464, 19.5067 )
 enabled = false

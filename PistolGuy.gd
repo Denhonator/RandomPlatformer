@@ -3,18 +3,12 @@ extends KinematicBody2D
 var vel =			Vector2(0,0)
 var maxms =			2
 var ms =			2
-var maxSpeed =		50
 var acc =			10
 var jumpSpeed =		-150
 var maxJumpReserve = 170
 var aniCounter =	0
 var aniSpeed =		1.3
-var shotSpeed =		3
-var shotSize =		1
-var damage =		1
-var health =		10
 var shotAni =		0
-var shotCooldown =	0.3
 var shootDir =		0
 var airCounter =	0
 var xp =			0
@@ -22,6 +16,8 @@ var xpReward =		1
 var stunDur =		0.5
 var iframeDur =		1
 var hitCounter =	5
+var maxProj =		5
+var projs =			0
 var jumpReserve
 var sprite
 var projectileParent
@@ -32,8 +28,14 @@ var action = {"left":false,"right":false,"up":false,"down":false,"jump":false,"a
 var rays = {}
 var col
 var gui
+var aiReaction = 4
 
 export(bool) var AI
+export(int) var maxSpeed
+export(float) var shotSpeed
+export(float) var damage
+export(int) var health
+export(float) var shotCooldown
 
 enum Ani{
 	IDLE = 0
@@ -63,24 +65,46 @@ func _ready():
 		modulate = Color(0.4,0,0)
 		for r in find_node("Rays").get_children():
 			rays[r.get_name()]=r
+			rays[r.get_name()].enabled = r.get_name().substr(0,4)=="left"
 		action["attack"] = true
-		action["right"] = true
-		rays["rightGround"].enabled = true
-		rays["rightWall"].enabled = true
+		action["left"] = true
 	else:
 		gui = get_node("/root/Main/GUI")
-	
+		
+func Randomize(power, count):
+	xpReward = power
+	if count%2==1 and randi()%10>2:
+		maxSpeed = 0
+	else:
+		maxSpeed += randi()%11-5
+	for i in range(power):
+		var r = randi()%4
+		if r==0:
+			shotSpeed+=2
+		elif r==1:
+			damage+=1
+		elif r==2:
+			health+=2
+		elif r==3:
+			shotCooldown=max(0.1,shotCooldown-0.1)
+
 func GetInput():
 	if not AI:
 		for key in action.keys():
 			action[key] = Input.is_action_pressed(key)
-	else:
+	elif not aiReaction:
+		aiReaction = 4
 		var ac = "right" if action["right"] else "left"
-		if (action[ac] and not rays[ac+"Ground"].is_colliding() or rays[ac+"Wall"].is_colliding()):
-			action["right"] = !action["right"]
-			action["left"] = !action["left"]
-			for key in rays.keys():
-				rays[key].enabled = !rays[key].enabled
+		action["up"] = rays[ac+"Up"].is_colliding() and rays[ac+"Up"].get_collider().get_name()=="Body"
+		action["down"] = rays[ac+"Down"].is_colliding() and rays[ac+"Down"].get_collider().get_name()=="Body"
+		if maxSpeed:
+			if (action[ac] and not rays[ac+"Ground"].is_colliding() or rays[ac+"Wall"].is_colliding()):
+				action["right"] = !action["right"]
+				action["left"] = !action["left"]
+				for key in rays.keys():
+					rays[key].enabled = !rays[key].enabled
+	else:
+		aiReaction-=1
 		
 func _process(delta):
 	if hitCounter < 10:
@@ -105,12 +129,12 @@ func _process(delta):
 		else:
 			shootDir = 0
 		
-	if shootDir == 1 and col.shape.extents.y==29:
-		col.move_local_y(6)
-		col.shape.extents.y = 23
-	elif shootDir < 1 and col.shape.extents.y==23:
-		col.move_local_y(-6)
-		col.shape.extents.y = 29
+	if sprite.frame==Ani.DOWN or sprite.frame==Ani.DUCK:
+		col.position.y = 10
+		col.scale.y = 0.76
+	else:
+		col.position.y = 3
+		col.scale.y = 1
 		
 	if shootDir and is_on_floor():
 		ms = 0
@@ -128,7 +152,7 @@ func _process(delta):
 		jumpReserve = maxJumpReserve
 	
 	if not is_on_floor():
-		vel.y = min(vel.y+10, 4*maxSpeed)
+		vel.y = min(vel.y+10, 4*50)
 		airCounter+=delta
 		if airCounter>5:
 			queue_free()
@@ -138,54 +162,66 @@ func _process(delta):
 	move_and_slide(Vector2(vel.x*ms,vel.y),Vector2(0,-1))
 	
 	if gui:
-		gui.get_child(2).text = String(global_position.x).pad_decimals(0)
+		gui.distance.text = String(global_position.x).pad_decimals(0)
 	
 	if shotCounter < shotCooldown:
 		shotCounter+=delta
 	elif action["attack"]:
 		Shoot()
 	
-	RunAni(vel.x,delta)
+	var lookdir = 0
+	if action["left"]:
+		lookdir = -1
+	elif action["right"]:
+		lookdir = 1
+	RunAni(lookdir,delta)
 
 func Shoot():
+	if projs>=maxProj:
+		return
 	shotCounter = 0
 	shotAni = 0.6
 	var shot = projectile.instance()
-	shot.vel.x = maxSpeed*(shotSpeed+0.1)/shotSize
+	shot.vel.x = 50*(shotSpeed+0.1)/damage/damage
 	if shootDir:
 		shot.vel.x/=2
 		shot.vel.y = abs(shot.vel.x)*shootDir
 	if sprite.flip_h:
 		shot.vel.x = -shot.vel.x
-	shot.scale*=shotSize
+	shot.scale *= damage
 	shot.damage = damage
 	shot.AI = AI
-	shot.shooter = self
+	shot.shooter = weakref(self)
 	if AI:
 		shot.modulate = Color(0.4,0,0)
 	var pos = shotSpawn[4+shootDir].global_position if sprite.flip_h else shotSpawn[1+shootDir].global_position
-	shot.global_position = pos - Vector2(shotSize,0) if sprite.flip_h else pos + Vector2(shotSize,0)
+	shot.global_position = pos - Vector2(damage,0) if sprite.flip_h else pos + Vector2(damage,0)
 	projectileParent.add_child(shot)
+	projs+=1
 	
 func GetHit(proj):
 	if hitCounter>iframeDur:
 		health-=proj.damage
 		if not AI:
-			gui.get_child(0).text = String(health).pad_decimals(0)+"HP"
+			gui.HP.text = String(health).pad_decimals(0)+"HP"
 			hitCounter = 0
 			vel.y = jumpSpeed
 			var d = global_position.x-proj.global_position.x
 			vel.x = (d/abs(d))*maxms*10
 		if health<=0:
-			proj.shooter.xp+=xpReward
-			if proj.shooter.gui:
-				proj.shooter.gui.get_child(1).text = String(proj.shooter.xp).pad_decimals(0)+"XP"
+			var ref = proj.shooter.get_ref()
+			if ref:
+				ref.xp+=xpReward
+				if ref.gui:
+					ref.gui.XP.text = String(ref.xp).pad_decimals(0)+"XP"
 			queue_free()
 
 func RunAni(x, delta):
 	shotAni = max(0,shotAni-delta)
 	if x:
 		sprite.flip_h = x<0
+	if not maxSpeed:
+		x = 0
 	if shootDir == -1:
 		if shotAni or x:
 			sprite.frame = Ani.UP
