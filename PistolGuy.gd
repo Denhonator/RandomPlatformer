@@ -19,6 +19,9 @@ var shootDir =		0
 var airCounter =	0
 var xp =			0
 var xpReward =		1
+var stunDur =		0.5
+var iframeDur =		1
+var hitCounter =	5
 var jumpReserve
 var sprite
 var projectileParent
@@ -80,20 +83,27 @@ func GetInput():
 				rays[key].enabled = !rays[key].enabled
 		
 func _process(delta):
-	GetInput()
-	if action["left"]:
-		vel.x = -maxSpeed
-	elif action["right"]:
-		vel.x = maxSpeed
-	else:
-		vel.x = 0
-		
-	if action["up"]:
-		shootDir = -1
-	elif action["down"]:
-		shootDir = 1
-	else:
-		shootDir = 0
+	if hitCounter < 10:
+		hitCounter+=delta
+		if hitCounter < iframeDur:
+			visible = int(hitCounter*10)%2==0
+		else:
+			visible = true
+	if hitCounter>stunDur:
+		GetInput()
+		if action["left"]:
+			vel.x = -maxSpeed
+		elif action["right"]:
+			vel.x = maxSpeed
+		else:
+			vel.x = 0
+			
+		if action["up"]:
+			shootDir = -1
+		elif action["down"]:
+			shootDir = 1
+		else:
+			shootDir = 0
 		
 	if shootDir == 1 and col.shape.extents.y==29:
 		col.move_local_y(6)
@@ -158,14 +168,19 @@ func Shoot():
 	projectileParent.add_child(shot)
 	
 func GetHit(proj):
-	health-=proj.damage
-	if gui:
-		gui.get_child(0).text = String(health).pad_decimals(0)+"HP"
-	if health<=0:
-		proj.shooter.xp+=xpReward
-		if proj.shooter.gui:
-			proj.shooter.gui.get_child(1).text = String(proj.shooter.xp).pad_decimals(0)+"XP"
-		queue_free()
+	if hitCounter>iframeDur:
+		health-=proj.damage
+		if not AI:
+			gui.get_child(0).text = String(health).pad_decimals(0)+"HP"
+			hitCounter = 0
+			vel.y = jumpSpeed
+			var d = global_position.x-proj.global_position.x
+			vel.x = (d/abs(d))*maxms*10
+		if health<=0:
+			proj.shooter.xp+=xpReward
+			if proj.shooter.gui:
+				proj.shooter.gui.get_child(1).text = String(proj.shooter.xp).pad_decimals(0)+"XP"
+			queue_free()
 
 func RunAni(x, delta):
 	shotAni = max(0,shotAni-delta)
