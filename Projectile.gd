@@ -18,7 +18,7 @@ func _process(delta):
 		life-=delta
 		if life<=0:
 			Destroy()
-	if abs(area.position.x)>=shotRange:
+	if abs(area.position.x)+abs(area.position.y)>=shotRange:
 		Destroy()
 
 func _on_area_entered(area):

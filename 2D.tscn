@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://2D.gd" type="Script" id=1]
 [ext_resource path="res://StaticBody2D.gd" type="Script" id=2]
@@ -8,7 +8,7 @@
 [ext_resource path="res://GUI.gd" type="Script" id=6]
 [ext_resource path="res://ARCADECLASSIC.TTF" type="DynamicFontData" id=7]
 
-[sub_resource type="RectangleShape2D" id=3]
+[sub_resource type="RectangleShape2D" id=1]
 
 custom_solver_bias = 0.0
 extents = Vector2( 15.3591, 31.6588 )
@@ -18,7 +18,7 @@ extents = Vector2( 15.3591, 31.6588 )
 custom_solver_bias = 0.0
 extents = Vector2( 8, 29 )
 
-[sub_resource type="DynamicFont" id=1]
+[sub_resource type="DynamicFont" id=3]
 
 size = 42
 use_mipmaps = false
@@ -26,7 +26,23 @@ use_filter = false
 font_data = ExtResource( 7 )
 _sections_unfolded = [ "Extra Spacing", "Font", "Settings" ]
 
-[node name="Main" type="Node"]
+[sub_resource type="DynamicFont" id=4]
+
+size = 28
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 7 )
+_sections_unfolded = [ "Font", "Settings" ]
+
+[sub_resource type="DynamicFont" id=5]
+
+size = 28
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 7 )
+_sections_unfolded = [ "Font", "Settings" ]
+
+[node name="Main" type="Node" index="0"]
 
 script = ExtResource( 1 )
 
@@ -70,7 +86,7 @@ _sections_unfolded = [ "Transform" ]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Level/Platform/VisibilityNotifier2D/Area2D" index="0"]
 
-shape = SubResource( 3 )
+shape = SubResource( 1 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="Sprite" type="Sprite" parent="Level/Platform/VisibilityNotifier2D/Area2D" index="1"]
@@ -120,7 +136,7 @@ shotSpeed = 3.0
 damage = 1.0
 health = 10
 shotCooldown = 0.4
-shotRange = 150.0
+shotRange = 100.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Body" index="0"]
 
@@ -196,12 +212,14 @@ _sections_unfolded = [ "Transform" ]
 
 [node name="GUI" type="CanvasLayer" parent="." index="3"]
 
+pause_mode = 2
 layer = 1
 offset = Vector2( 0, 0 )
 rotation = 0.0
 scale = Vector2( 1, 1 )
 transform = Transform2D( 1, 0, 0, 1, 0, 0 )
 script = ExtResource( 6 )
+_sections_unfolded = [ "Pause" ]
 
 [node name="HP" type="Label" parent="GUI" index="0"]
 
@@ -218,7 +236,7 @@ mouse_filter = 2
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 4
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 3 )
 text = "10HP"
 percent_visible = 1.0
 lines_skipped = 0
@@ -240,7 +258,7 @@ mouse_filter = 2
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 4
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 3 )
 text = "0XP"
 percent_visible = 1.0
 lines_skipped = 0
@@ -262,7 +280,7 @@ mouse_filter = 2
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 4
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 3 )
 text = "LV1"
 percent_visible = 1.0
 lines_skipped = 0
@@ -284,7 +302,7 @@ mouse_filter = 2
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 4
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 3 )
 text = "Distance"
 percent_visible = 1.0
 lines_skipped = 0
@@ -306,15 +324,254 @@ mouse_filter = 2
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 4
-custom_fonts/font = SubResource( 1 )
+custom_fonts/font = SubResource( 3 )
 text = "0"
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 _sections_unfolded = [ "Rect", "custom_fonts" ]
 
+[node name="Menu" type="Control" parent="GUI" index="5"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 40.0
+margin_bottom = 40.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+
+[node name="BindKeys" type="Button" parent="GUI/Menu" index="0"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 405.0
+margin_top = 117.0
+margin_right = 667.0
+margin_bottom = 152.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 4 )
+toggle_mode = false
+enabled_focus_mode = 0
+shortcut = null
+group = null
+text = "Bind Keys"
+flat = false
+align = 0
+_sections_unfolded = [ "custom_fonts" ]
+
+[node name="Resume" type="Button" parent="GUI/Menu" index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 406.0
+margin_top = 67.0
+margin_right = 667.0
+margin_bottom = 102.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 5 )
+toggle_mode = false
+enabled_focus_mode = 0
+shortcut = null
+group = null
+text = "Resume"
+flat = false
+align = 0
+_sections_unfolded = [ "custom_fonts" ]
+
+[node name="Health" type="Button" parent="GUI/Menu" index="2"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 688.0
+margin_top = 67.0
+margin_right = 949.0
+margin_bottom = 102.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 5 )
+toggle_mode = false
+enabled_focus_mode = 0
+shortcut = null
+group = null
+text = "Health"
+flat = false
+align = 0
+_sections_unfolded = [ "custom_fonts" ]
+
+[node name="Damage" type="Button" parent="GUI/Menu" index="3"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 688.0
+margin_top = 117.0
+margin_right = 949.0
+margin_bottom = 152.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 5 )
+toggle_mode = false
+enabled_focus_mode = 0
+shortcut = null
+group = null
+text = "Damage"
+flat = false
+align = 0
+_sections_unfolded = [ "custom_fonts" ]
+
+[node name="Movement" type="Button" parent="GUI/Menu" index="4"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 688.0
+margin_top = 168.0
+margin_right = 949.0
+margin_bottom = 203.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 5 )
+toggle_mode = false
+enabled_focus_mode = 0
+shortcut = null
+group = null
+text = "Movement"
+flat = false
+align = 0
+_sections_unfolded = [ "custom_fonts" ]
+
+[node name="ShotSpeed" type="Button" parent="GUI/Menu" index="5"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 688.0
+margin_top = 218.0
+margin_right = 949.0
+margin_bottom = 253.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 5 )
+toggle_mode = false
+enabled_focus_mode = 0
+shortcut = null
+group = null
+text = "Shot Speed"
+flat = false
+align = 0
+_sections_unfolded = [ "custom_fonts" ]
+
+[node name="Range" type="Button" parent="GUI/Menu" index="6"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 688.0
+margin_top = 270.0
+margin_right = 949.0
+margin_bottom = 305.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 5 )
+toggle_mode = false
+enabled_focus_mode = 0
+shortcut = null
+group = null
+text = "Range"
+flat = false
+align = 0
+_sections_unfolded = [ "custom_fonts" ]
+
+[node name="Firerate" type="Button" parent="GUI/Menu" index="7"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 688.0
+margin_top = 321.0
+margin_right = 949.0
+margin_bottom = 356.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 5 )
+toggle_mode = false
+enabled_focus_mode = 0
+shortcut = null
+group = null
+text = "Firerate"
+flat = false
+align = 0
+_sections_unfolded = [ "custom_fonts" ]
+
 [connection signal="screen_entered" from="Level/Platform/VisibilityNotifier2D" to="Level/Platform" method="_on_VisibilityNotifier2D_screen_entered"]
 
 [connection signal="body_entered" from="Level/Platform/VisibilityNotifier2D/Area2D" to="." method="_on_Area2D_body_entered"]
+
+[connection signal="pressed" from="GUI/Menu/BindKeys" to="GUI" method="_on_BindKeys_pressed"]
+
+[connection signal="pressed" from="GUI/Menu/Resume" to="GUI" method="_on_Resume_pressed"]
+
+[connection signal="pressed" from="GUI/Menu/Health" to="GUI" method="_on_Health_pressed"]
+
+[connection signal="pressed" from="GUI/Menu/Damage" to="GUI" method="_on_Damage_pressed"]
+
+[connection signal="pressed" from="GUI/Menu/Movement" to="GUI" method="_on_Movement_pressed"]
+
+[connection signal="pressed" from="GUI/Menu/ShotSpeed" to="GUI" method="_on_ShotSpeed_pressed"]
+
+[connection signal="pressed" from="GUI/Menu/Range" to="GUI" method="_on_Range_pressed"]
+
+[connection signal="pressed" from="GUI/Menu/Firerate" to="GUI" method="_on_Firerate_pressed"]
 
 

@@ -11,7 +11,7 @@ var aniSpeed =		1.3
 var shotAni =		0
 var shootDir =		0
 var airCounter =	0
-var xp =			0
+var xp =			100
 var xpReward =		1
 var stunDur =		0.5
 var iframeDur =		1
@@ -162,7 +162,7 @@ func _process(delta):
 	if not is_on_floor():
 		vel.y = min(vel.y+10, 4*50)
 		airCounter+=delta
-		if airCounter>5:
+		if airCounter>3:
 			queue_free()
 	else:
 		airCounter=0
