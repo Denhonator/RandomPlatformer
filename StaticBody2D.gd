@@ -26,8 +26,8 @@ func Reset():
 	noti.position = original[1]
 	
 func ContinuePlatform(i):
-	var index = vis.polygon.size()/2
-	var prev = vis.polygon[index-1]
+	var index = vis.polygon.size()-3
+	var prev = vis.polygon[index]
 	if prev.x>=goal:
 		return
 	var pol = vis.polygon
@@ -36,20 +36,16 @@ func ContinuePlatform(i):
 	if randi()%100>20:
 		dir = -dir
 	
-	if dir<0:
-		pol.insert(index,Vector2(prev.x,prev.y+dir))
-		pol.insert(index+1,Vector2(prev.x+length,prev.y+dir))
-		pol.insert(index+2,Vector2(prev.x+length,prev.y+dir+5))
-		pol.insert(index+3,Vector2(prev.x+5,prev.y+dir+5))
-		pol[index+4].x+=5
-	else:
-		pol[index-1].x+=5
-		pol.insert(index,Vector2(prev.x+5,prev.y+dir))
-		pol.insert(index+1,Vector2(prev.x+length,prev.y+dir))
-		pol.insert(index+2,Vector2(prev.x+length,prev.y+dir+5))
-		pol.insert(index+3,Vector2(prev.x,prev.y+dir+5))
+	if dir<0:	#up
+		pol.insert(index+1,Vector2(prev.x,prev.y+dir))
+		pol.insert(index+2,Vector2(prev.x+length,prev.y+dir))
+	else:		#down
+		pol[index].x+=5
+		pol.insert(index+1,Vector2(prev.x+5,prev.y+dir))
+		pol.insert(index+2,Vector2(prev.x+length,prev.y+dir))
+	pol[pol.size()-2].x+=length
 		
-	noti.position = pol[index+1]
+	noti.position = pol[index+2]
 		
 	if pol.size()>80:
 		pol.remove(pol.size()-1)
@@ -75,5 +71,5 @@ func SpawnEnemy(boss):
 	ecount+=1
 
 func _on_VisibilityNotifier2D_screen_entered():
-	for i in range(10):
+	for i in range(5):
 		ContinuePlatform(i)

@@ -3,10 +3,11 @@ extends Node2D
 var area
 var vel = Vector2(0,0)
 var damage = 0
-var life = 0.5
+var life = 1
 var AI = false
 var onScreen = false
 var shooter = null
+var shotRange
 
 func _ready():
 	area = get_child(0)
@@ -16,9 +17,9 @@ func _process(delta):
 	if not onScreen:
 		life-=delta
 		if life<=0:
-			if shooter.get_ref():
-				shooter.get_ref().projs-=1
-			queue_free()
+			Destroy()
+	if abs(area.position.x)>=shotRange:
+		Destroy()
 
 func _on_area_entered(area):
 	pass
@@ -29,6 +30,9 @@ func _on_body_entered(body):
 			body.GetHit(self)
 		else:
 			return
+	Destroy()
+	
+func Destroy():
 	if shooter.get_ref():
 		shooter.get_ref().projs-=1
 	queue_free()

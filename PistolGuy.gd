@@ -18,13 +18,16 @@ var iframeDur =		1
 var hitCounter =	5
 var maxProj =		5
 var projs =			0
+var rollDur =		0.5
+var rollCooldown =	0.5
+var rollCounter =	0
 var jumpReserve
 var sprite
 var projectileParent
 var projectile
 var shotSpawn = []
 var shotCounter
-var action = {"left":false,"right":false,"up":false,"down":false,"jump":false,"attack":false}
+var action = {"left":false,"right":false,"up":false,"down":false,"jump":false,"attack":false,"roll":false}
 var rays = {}
 var col
 var gui
@@ -36,6 +39,7 @@ export(float) var shotSpeed
 export(float) var damage
 export(int) var health
 export(float) var shotCooldown
+export(float) var shotRange
 
 enum Ani{
 	IDLE = 0
@@ -45,6 +49,9 @@ enum Ani{
 	RUN2 = 4
 	UP   = 5
 	DOWN = 6
+	ROLL1= 7
+	ROLL2= 8
+	ROLL3= 9
 	}
 
 func _ready():
@@ -78,7 +85,7 @@ func Randomize(power, count):
 	else:
 		maxSpeed += randi()%11-5
 	for i in range(power):
-		var r = randi()%4
+		var r = randi()%5
 		if r==0:
 			shotSpeed+=2
 		elif r==1:
@@ -87,6 +94,8 @@ func Randomize(power, count):
 			health+=2
 		elif r==3:
 			shotCooldown=max(0.1,shotCooldown-0.1)
+		elif r==4:
+			shotRange+=50
 
 func GetInput():
 	if not AI:
@@ -113,7 +122,7 @@ func _process(delta):
 			visible = int(hitCounter*10)%2==0
 		else:
 			visible = true
-	if hitCounter>stunDur:
+	if hitCounter>stunDur and rollCounter<=0:
 		GetInput()
 		if action["left"]:
 			vel.x = -maxSpeed
@@ -128,15 +137,8 @@ func _process(delta):
 			shootDir = 1
 		else:
 			shootDir = 0
-		
-	if sprite.frame==Ani.DOWN or sprite.frame==Ani.DUCK:
-		col.position.y = 10
-		col.scale.y = 0.76
-	else:
-		col.position.y = 3
-		col.scale.y = 1
-		
-	if shootDir and is_on_floor():
+
+	if shootDir and is_on_floor() and rollCounter<=0:
 		ms = 0
 	else:
 		ms = maxms
@@ -150,6 +152,12 @@ func _process(delta):
 			vel.y -= maxJumpReserve/10
 	else:
 		jumpReserve = maxJumpReserve
+		
+	if action["roll"] and rollCounter<=-rollCooldown:
+		rollCounter=rollDur
+		vel.x = -maxSpeed*1.5 if sprite.flip_h else maxSpeed*1.5
+	elif rollCounter>=-rollCooldown:
+		rollCounter-=delta
 	
 	if not is_on_floor():
 		vel.y = min(vel.y+10, 4*50)
@@ -175,9 +183,19 @@ func _process(delta):
 	elif action["right"]:
 		lookdir = 1
 	RunAni(lookdir,delta)
+	
+	if sprite.frame==Ani.DOWN or sprite.frame==Ani.DUCK:
+		col.position.y = 10
+		col.scale.y = 0.76
+	elif rollCounter>0:
+		col.position.y = 23
+		col.scale.y = 0.3
+	else:
+		col.position.y = 3
+		col.scale.y = 1
 
 func Shoot():
-	if projs>=maxProj:
+	if projs>=maxProj or hitCounter<stunDur:
 		return
 	shotCounter = 0
 	shotAni = 0.6
@@ -190,6 +208,7 @@ func Shoot():
 		shot.vel.x = -shot.vel.x
 	shot.scale *= damage
 	shot.damage = damage
+	shot.shotRange = shotRange
 	shot.AI = AI
 	shot.shooter = weakref(self)
 	if AI:
@@ -222,6 +241,15 @@ func RunAni(x, delta):
 		sprite.flip_h = x<0
 	if not maxSpeed:
 		x = 0
+	if rollCounter > 0:
+		var third = rollDur/3
+		if rollCounter>2*third:
+			sprite.frame = Ani.ROLL1
+		elif rollCounter>third:
+			sprite.frame = Ani.ROLL2
+		else:
+			sprite.frame = Ani.ROLL3
+		return
 	if shootDir == -1:
 		if shotAni or x:
 			sprite.frame = Ani.UP
