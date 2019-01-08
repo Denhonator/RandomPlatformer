@@ -11,7 +11,7 @@ var aniSpeed =		1.3
 var shotAni =		0
 var shootDir =		0
 var airCounter =	0
-var xp =			100
+var xp =			0
 var xpReward =		1
 var stunDur =		0.5
 var iframeDur =		1
@@ -19,8 +19,8 @@ var hitCounter =	5
 var maxProj =		5
 var projs =			0
 var rollDur =		0.5
-var rollCooldown =	0.5
-var rollCounter =	0
+var rollCooldown =	1
+var rollCounter
 var jumpReserve
 var sprite
 var projectileParent
@@ -32,6 +32,7 @@ var rays = {}
 var col
 var gui
 var aiReaction = 4
+onready var hpbar = find_node("HPBar")
 
 export(bool) var AI
 export(int) var maxSpeed
@@ -57,6 +58,7 @@ enum Ani{
 func _ready():
 	jumpReserve = maxJumpReserve
 	shotCounter = shotCooldown
+	rollCounter = -rollCooldown
 	sprite = find_node("Sprite")
 	projectile = preload("res://Projectile.tscn")
 	projectileParent = get_node("/root/Main/Projectiles")
@@ -68,15 +70,15 @@ func _ready():
 	shotSpawn.append(shots.find_node("ShotLU"))
 	shotSpawn.append(shots.find_node("ShotL"))
 	shotSpawn.append(shots.find_node("ShotLD"))
+	if hpbar:
+		hpbar.max_value = health
 	if AI:
-		modulate = Color(0.4,0,0)
 		for r in find_node("Rays").get_children():
 			rays[r.get_name()]=r
 			rays[r.get_name()].enabled = r.get_name().substr(0,4)=="left"
 		action["attack"] = true
 		action["left"] = true
-	else:
-		gui = get_node("/root/Main/GUI")
+	gui = get_node("/root/Main/GUI")
 		
 func Randomize(power, count):
 	xpReward = power
@@ -91,7 +93,7 @@ func Randomize(power, count):
 		elif r==1:
 			damage+=1
 		elif r==2:
-			health+=2
+			health+=3
 		elif r==3:
 			shotCooldown=max(0.1,shotCooldown-0.1)
 		elif r==4:
@@ -106,8 +108,8 @@ func GetInput():
 		var ac = "right" if action["right"] else "left"
 		action["up"] = rays[ac+"Up"].is_colliding() and rays[ac+"Up"].get_collider().get_name()=="Body"
 		action["down"] = rays[ac+"Down"].is_colliding() and rays[ac+"Down"].get_collider().get_name()=="Body"
-		if maxSpeed:
-			if (action[ac] and not rays[ac+"Ground"].is_colliding() or rays[ac+"Wall"].is_colliding()):
+		if (maxSpeed and (action[ac] and not rays[ac+"Ground"].is_colliding() or rays[ac+"Wall"].is_colliding())
+			or not maxSpeed and gui.playerref.get_ref() and ((gui.player.global_position.x>global_position.x and action["left"]) or (gui.player.global_position.x<global_position.x and action["right"]))):
 				action["right"] = !action["right"]
 				action["left"] = !action["left"]
 				for key in rays.keys():
@@ -156,11 +158,15 @@ func _process(delta):
 	if action["roll"] and rollCounter<=-rollCooldown:
 		rollCounter=rollDur
 		vel.x = -maxSpeed*1.5 if sprite.flip_h else maxSpeed*1.5
+		move_local_y(-20)
+		if is_on_floor():
+			vel.y = -10
 	elif rollCounter>=-rollCooldown:
 		rollCounter-=delta
 	
 	if not is_on_floor():
-		vel.y = min(vel.y+10, 4*50)
+		var mult = 4 if action["down"] and vel.y>0 and vel.y<200 else 1
+		vel.y = min(vel.y+10*mult, 200*mult)
 		airCounter+=delta
 		if airCounter>3:
 			queue_free()
@@ -169,8 +175,8 @@ func _process(delta):
 	
 	move_and_slide(Vector2(vel.x*ms,vel.y),Vector2(0,-1))
 	
-	if gui:
-		gui.distance.text = String(global_position.x).pad_decimals(0)
+	if not AI:
+		gui.distance.text = String(global_position.x/40).pad_decimals(0)+"m"
 	
 	if shotCounter < shotCooldown:
 		shotCounter+=delta
@@ -206,7 +212,7 @@ func Shoot():
 		shot.vel.y = abs(shot.vel.x)*shootDir
 	if sprite.flip_h:
 		shot.vel.x = -shot.vel.x
-	shot.scale *= damage
+	shot.scale += Vector2(damage-1,damage-1)*0.35
 	shot.damage = damage
 	shot.shotRange = shotRange
 	shot.AI = AI
@@ -221,6 +227,8 @@ func Shoot():
 func GetHit(proj):
 	if hitCounter>iframeDur:
 		health-=proj.damage
+		if hpbar:
+			hpbar.value = health
 		if not AI:
 			gui.HP.text = String(health).pad_decimals(0)+"HP"
 			hitCounter = 0
@@ -231,8 +239,8 @@ func GetHit(proj):
 			var ref = proj.shooter.get_ref()
 			if ref:
 				ref.xp+=xpReward
-				if ref.gui:
-					ref.gui.XP.text = String(ref.xp).pad_decimals(0)+"XP"
+				if gui:
+					gui.XP.text = String(ref.xp).pad_decimals(0)+"XP"
 			queue_free()
 
 func RunAni(x, delta):

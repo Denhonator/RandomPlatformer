@@ -7,6 +7,7 @@ onready var XP = find_node("XP")
 onready var level = find_node("Level")
 onready var distance = find_node("Distance")
 onready var time = find_node("Time")
+onready var roll = find_node("RollIcon")
 onready var menu = find_node("Menu")
 onready var health = find_node("Health")
 onready var damage = find_node("Damage")
@@ -15,6 +16,7 @@ onready var shotSpeed = find_node("ShotSpeed")
 onready var shotRange = find_node("Range")
 onready var firerate = find_node("Firerate")
 onready var player = get_node("/root/Main/Player/Body")
+var playerref
 var healthxp = 4
 var damagexp = 4
 var movementxp = 4
@@ -38,13 +40,16 @@ func UpdateTexts():
 	firerate.text = "Firerate: "+String(fireratexp)
 	XP.text = String(player.xp)+"XP"
 	HP.text = String(player.health)+"HP"
+	playerref = weakref(player)
 
 func _process(delta):
 	if bindCooldown>0:
 		bindCooldown-=delta
-	if not menu.visible:
+	if not menu.visible and playerref.get_ref():
 		timer+=delta
 		time.text=String(timer).pad_decimals(0)
+		var c = (player.rollCounter+player.rollCooldown)/(player.rollDur+player.rollCooldown)
+		roll.material.set_shader_param("new_color",Color(c,c,c,1.0))
 	
 func _input(event):
 	if event is InputEventKey and event.pressed and bindCooldown<=0:
@@ -94,7 +99,7 @@ func _on_Damage_pressed():
 	if player.xp<damagexp:
 		return
 	player.xp-=damagexp
-	player.damage += damagexp/20.0
+	player.damage += 0.5
 	damagexp += 2
 	UpdateTexts()
 
@@ -102,8 +107,8 @@ func _on_Movement_pressed():
 	if player.xp<movementxp:
 		return
 	player.xp-=movementxp
-	player.rollCooldown -= movementxp/100.0
-	player.maxSpeed += float(movementxp)
+	player.rollCooldown -= 0.1
+	player.maxSpeed += 5
 	movementxp += 2
 	UpdateTexts()
 
@@ -111,7 +116,7 @@ func _on_ShotSpeed_pressed():
 	if player.xp<shotSpeedxp:
 		return
 	player.xp-=shotSpeedxp
-	player.shotSpeed += shotSpeedxp/20.0
+	player.shotSpeed += 0.4
 	shotSpeedxp += 2
 	UpdateTexts()
 
@@ -119,7 +124,7 @@ func _on_Range_pressed():
 	if player.xp<shotRangexp:
 		return
 	player.xp-=shotRangexp
-	player.shotRange += 3.0*shotRangexp
+	player.shotRange += 20
 	shotRangexp += 2
 	UpdateTexts()
 
@@ -127,6 +132,9 @@ func _on_Firerate_pressed():
 	if player.xp<fireratexp:
 		return
 	player.xp-=fireratexp
-	player.shotCooldown -= fireratexp/200.0
+	player.shotCooldown -= 0.07
 	fireratexp += 2
 	UpdateTexts()
+
+func _on_Reset_pressed():
+	get_tree().reload_current_scene()

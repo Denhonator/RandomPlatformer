@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://2D.gd" type="Script" id=1]
 [ext_resource path="res://StaticBody2D.gd" type="Script" id=2]
@@ -26,6 +26,33 @@ use_filter = false
 font_data = ExtResource( 7 )
 _sections_unfolded = [ "Extra Spacing", "Font", "Settings" ]
 
+[sub_resource type="Shader" id=6]
+
+code = "shader_type canvas_item; //shader code
+render_mode blend_mix;
+
+uniform vec4 old_color : hint_color;
+uniform vec4 new_color : hint_color;
+
+void fragment()
+{
+	vec4 col = texture(TEXTURE, UV);
+	
+	COLOR = col;
+	if (col.a>0.0 && col.r == old_color.r && col.b == old_color.b && col.g == old_color.g)
+	{
+	COLOR = new_color;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id=7]
+
+render_priority = 0
+shader = SubResource( 6 )
+shader_param/old_color = Color( 0, 0, 0, 1 )
+shader_param/new_color = Color( 0, 0, 0, 1 )
+_sections_unfolded = [ "shader_param" ]
+
 [sub_resource type="DynamicFont" id=4]
 
 size = 28
@@ -42,7 +69,7 @@ use_filter = true
 font_data = ExtResource( 7 )
 _sections_unfolded = [ "Font", "Settings" ]
 
-[node name="Main" type="Node" index="0"]
+[node name="Main" type="Node"]
 
 script = ExtResource( 1 )
 
@@ -123,7 +150,6 @@ _sections_unfolded = [ "Transform" ]
 
 [node name="Body" type="KinematicBody2D" parent="Player" index="0"]
 
-editor/display_folded = true
 input_pickable = false
 collision_layer = 2
 collision_mask = 1
@@ -131,11 +157,11 @@ collision/safe_margin = 0.08
 script = ExtResource( 4 )
 _sections_unfolded = [ "Collision", "Transform", "Visibility" ]
 AI = null
-maxSpeed = 40
+maxSpeed = 35
 shotSpeed = 3.0
 damage = 1.0
 health = 10
-shotCooldown = 0.4
+shotCooldown = 0.5
 shotRange = 100.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Body" index="0"]
@@ -154,30 +180,30 @@ _sections_unfolded = [ "Animation", "Material", "Offset", "Visibility" ]
 
 [node name="Camera2D" type="Camera2D" parent="Player/Body" index="2"]
 
-position = Vector2( 3.23889, 1.6284 )
+position = Vector2( 63.4667, -0.688034 )
 anchor_mode = 1
 rotating = false
 current = true
 zoom = Vector2( 0.5, 0.5 )
-limit_left = -10000000
+limit_left = -100
 limit_top = -10000000
-limit_right = 10000000
+limit_right = 4200
 limit_bottom = 10000000
 limit_smoothed = false
 drag_margin_h_enabled = true
 drag_margin_v_enabled = true
 smoothing_enabled = false
-smoothing_speed = 5.0
+smoothing_speed = 20.0
 offset_v = 0.0
 offset_h = 0.0
 drag_margin_left = 0.05
-drag_margin_top = 0.2
+drag_margin_top = 0.3
 drag_margin_right = 0.05
 drag_margin_bottom = 0.1
 editor_draw_screen = true
 editor_draw_limits = false
 editor_draw_drag_margin = false
-_sections_unfolded = [ "Drag Margin", "Editor" ]
+_sections_unfolded = [ "Drag Margin", "Editor", "Limit", "Offset", "Smoothing" ]
 
 [node name="Shots" type="Node2D" parent="Player/Body" index="3"]
 
@@ -303,7 +329,7 @@ mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 4
 custom_fonts/font = SubResource( 3 )
-text = "Distance"
+text = "0m"
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
@@ -331,7 +357,17 @@ lines_skipped = 0
 max_lines_visible = -1
 _sections_unfolded = [ "Rect", "custom_fonts" ]
 
-[node name="Menu" type="Control" parent="GUI" index="5"]
+[node name="RollIcon" type="Sprite" parent="GUI" index="5"]
+
+material = SubResource( 7 )
+position = Vector2( 168.079, 12.0057 )
+scale = Vector2( 1.5, 1.5 )
+texture = ExtResource( 5 )
+hframes = 10
+frame = 7
+_sections_unfolded = [ "Material", "Transform", "Visibility" ]
+
+[node name="Menu" type="Control" parent="GUI" index="6"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -353,9 +389,9 @@ anchor_top = 0.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 405.0
-margin_top = 117.0
+margin_top = 168.0
 margin_right = 667.0
-margin_bottom = 152.0
+margin_bottom = 203.0
 rect_pivot_offset = Vector2( 0, 0 )
 rect_clip_content = false
 mouse_filter = 0
@@ -398,7 +434,33 @@ flat = false
 align = 0
 _sections_unfolded = [ "custom_fonts" ]
 
-[node name="Health" type="Button" parent="GUI/Menu" index="2"]
+[node name="Reset" type="Button" parent="GUI/Menu" index="2"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 406.0
+margin_top = 117.0
+margin_right = 667.0
+margin_bottom = 152.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+custom_fonts/font = SubResource( 5 )
+toggle_mode = false
+enabled_focus_mode = 0
+shortcut = null
+group = null
+text = "Reset"
+flat = false
+align = 0
+_sections_unfolded = [ "custom_fonts" ]
+
+[node name="Health" type="Button" parent="GUI/Menu" index="3"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -424,7 +486,7 @@ flat = false
 align = 0
 _sections_unfolded = [ "custom_fonts" ]
 
-[node name="Damage" type="Button" parent="GUI/Menu" index="3"]
+[node name="Damage" type="Button" parent="GUI/Menu" index="4"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -450,7 +512,7 @@ flat = false
 align = 0
 _sections_unfolded = [ "custom_fonts" ]
 
-[node name="Movement" type="Button" parent="GUI/Menu" index="4"]
+[node name="Movement" type="Button" parent="GUI/Menu" index="5"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -476,7 +538,7 @@ flat = false
 align = 0
 _sections_unfolded = [ "custom_fonts" ]
 
-[node name="ShotSpeed" type="Button" parent="GUI/Menu" index="5"]
+[node name="ShotSpeed" type="Button" parent="GUI/Menu" index="6"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -502,7 +564,7 @@ flat = false
 align = 0
 _sections_unfolded = [ "custom_fonts" ]
 
-[node name="Range" type="Button" parent="GUI/Menu" index="6"]
+[node name="Range" type="Button" parent="GUI/Menu" index="7"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -528,7 +590,7 @@ flat = false
 align = 0
 _sections_unfolded = [ "custom_fonts" ]
 
-[node name="Firerate" type="Button" parent="GUI/Menu" index="7"]
+[node name="Firerate" type="Button" parent="GUI/Menu" index="8"]
 
 anchor_left = 0.0
 anchor_top = 0.0
@@ -561,6 +623,8 @@ _sections_unfolded = [ "custom_fonts" ]
 [connection signal="pressed" from="GUI/Menu/BindKeys" to="GUI" method="_on_BindKeys_pressed"]
 
 [connection signal="pressed" from="GUI/Menu/Resume" to="GUI" method="_on_Resume_pressed"]
+
+[connection signal="pressed" from="GUI/Menu/Reset" to="GUI" method="_on_Reset_pressed"]
 
 [connection signal="pressed" from="GUI/Menu/Health" to="GUI" method="_on_Health_pressed"]
 
