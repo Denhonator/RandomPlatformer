@@ -1,12 +1,14 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://2D.gd" type="Script" id=1]
 [ext_resource path="res://StaticBody2D.gd" type="Script" id=2]
 [ext_resource path="res://goal.png" type="Texture" id=3]
 [ext_resource path="res://PistolGuy.gd" type="Script" id=4]
 [ext_resource path="res://character.png" type="Texture" id=5]
-[ext_resource path="res://GUI.gd" type="Script" id=6]
-[ext_resource path="res://ARCADECLASSIC.TTF" type="DynamicFontData" id=7]
+[ext_resource path="res://bub.ogg" type="AudioStream" id=6]
+[ext_resource path="res://GUI.gd" type="Script" id=7]
+[ext_resource path="res://ARCADECLASSIC.TTF" type="DynamicFontData" id=8]
+[ext_resource path="res://100jam.ogg" type="AudioStream" id=9]
 
 [sub_resource type="RectangleShape2D" id=1]
 
@@ -23,10 +25,10 @@ extents = Vector2( 8, 29 )
 size = 42
 use_mipmaps = false
 use_filter = false
-font_data = ExtResource( 7 )
+font_data = ExtResource( 8 )
 _sections_unfolded = [ "Extra Spacing", "Font", "Settings" ]
 
-[sub_resource type="Shader" id=6]
+[sub_resource type="Shader" id=4]
 
 code = "shader_type canvas_item; //shader code
 render_mode blend_mix;
@@ -45,28 +47,28 @@ void fragment()
 	}
 }"
 
-[sub_resource type="ShaderMaterial" id=7]
+[sub_resource type="ShaderMaterial" id=5]
 
 render_priority = 0
-shader = SubResource( 6 )
+shader = SubResource( 4 )
 shader_param/old_color = Color( 0, 0, 0, 1 )
 shader_param/new_color = Color( 0, 0, 0, 1 )
 _sections_unfolded = [ "shader_param" ]
 
-[sub_resource type="DynamicFont" id=4]
+[sub_resource type="DynamicFont" id=6]
 
 size = 28
 use_mipmaps = true
 use_filter = true
-font_data = ExtResource( 7 )
+font_data = ExtResource( 8 )
 _sections_unfolded = [ "Font", "Settings" ]
 
-[sub_resource type="DynamicFont" id=5]
+[sub_resource type="DynamicFont" id=7]
 
 size = 28
 use_mipmaps = true
 use_filter = true
-font_data = ExtResource( 7 )
+font_data = ExtResource( 8 )
 _sections_unfolded = [ "Font", "Settings" ]
 
 [node name="Main" type="Node"]
@@ -236,15 +238,25 @@ _sections_unfolded = [ "Transform" ]
 position = Vector2( -22.0813, -25.1774 )
 _sections_unfolded = [ "Transform" ]
 
+[node name="Audio" type="AudioStreamPlayer" parent="Player/Body" index="4"]
+
+stream = ExtResource( 6 )
+volume_db = 0.0
+pitch_scale = 1.0
+autoplay = false
+mix_target = 0
+bus = "Master"
+
 [node name="GUI" type="CanvasLayer" parent="." index="3"]
 
 pause_mode = 2
+editor/display_folded = true
 layer = 1
 offset = Vector2( 0, 0 )
 rotation = 0.0
 scale = Vector2( 1, 1 )
 transform = Transform2D( 1, 0, 0, 1, 0, 0 )
-script = ExtResource( 6 )
+script = ExtResource( 7 )
 _sections_unfolded = [ "Pause" ]
 
 [node name="HP" type="Label" parent="GUI" index="0"]
@@ -359,7 +371,7 @@ _sections_unfolded = [ "Rect", "custom_fonts" ]
 
 [node name="RollIcon" type="Sprite" parent="GUI" index="5"]
 
-material = SubResource( 7 )
+material = SubResource( 5 )
 position = Vector2( 168.079, 12.0057 )
 scale = Vector2( 1.5, 1.5 )
 texture = ExtResource( 5 )
@@ -398,7 +410,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-custom_fonts/font = SubResource( 4 )
+custom_fonts/font = SubResource( 6 )
 toggle_mode = false
 enabled_focus_mode = 0
 shortcut = null
@@ -424,7 +436,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-custom_fonts/font = SubResource( 5 )
+custom_fonts/font = SubResource( 7 )
 toggle_mode = false
 enabled_focus_mode = 0
 shortcut = null
@@ -450,7 +462,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-custom_fonts/font = SubResource( 5 )
+custom_fonts/font = SubResource( 7 )
 toggle_mode = false
 enabled_focus_mode = 0
 shortcut = null
@@ -476,7 +488,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-custom_fonts/font = SubResource( 5 )
+custom_fonts/font = SubResource( 7 )
 toggle_mode = false
 enabled_focus_mode = 0
 shortcut = null
@@ -502,7 +514,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-custom_fonts/font = SubResource( 5 )
+custom_fonts/font = SubResource( 7 )
 toggle_mode = false
 enabled_focus_mode = 0
 shortcut = null
@@ -528,7 +540,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-custom_fonts/font = SubResource( 5 )
+custom_fonts/font = SubResource( 7 )
 toggle_mode = false
 enabled_focus_mode = 0
 shortcut = null
@@ -554,7 +566,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-custom_fonts/font = SubResource( 5 )
+custom_fonts/font = SubResource( 7 )
 toggle_mode = false
 enabled_focus_mode = 0
 shortcut = null
@@ -580,7 +592,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-custom_fonts/font = SubResource( 5 )
+custom_fonts/font = SubResource( 7 )
 toggle_mode = false
 enabled_focus_mode = 0
 shortcut = null
@@ -606,7 +618,7 @@ mouse_filter = 0
 mouse_default_cursor_shape = 0
 size_flags_horizontal = 1
 size_flags_vertical = 1
-custom_fonts/font = SubResource( 5 )
+custom_fonts/font = SubResource( 7 )
 toggle_mode = false
 enabled_focus_mode = 0
 shortcut = null
@@ -615,6 +627,15 @@ text = "Firerate"
 flat = false
 align = 0
 _sections_unfolded = [ "custom_fonts" ]
+
+[node name="Music" type="AudioStreamPlayer" parent="." index="4"]
+
+stream = ExtResource( 9 )
+volume_db = -6.0
+pitch_scale = 1.0
+autoplay = true
+mix_target = 0
+bus = "Master"
 
 [connection signal="screen_entered" from="Level/Platform/VisibilityNotifier2D" to="Level/Platform" method="_on_VisibilityNotifier2D_screen_entered"]
 

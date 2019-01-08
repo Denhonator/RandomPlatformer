@@ -91,7 +91,7 @@ func _on_Health_pressed():
 	if player.xp<healthxp:
 		return
 	player.xp-=healthxp
-	player.health += healthxp
+	player.health += 2+healthxp/2
 	healthxp += 2
 	UpdateTexts()
 
@@ -116,7 +116,7 @@ func _on_ShotSpeed_pressed():
 	if player.xp<shotSpeedxp:
 		return
 	player.xp-=shotSpeedxp
-	player.shotSpeed += 0.4
+	player.shotSpeed += 0.8
 	shotSpeedxp += 2
 	UpdateTexts()
 
@@ -124,7 +124,7 @@ func _on_Range_pressed():
 	if player.xp<shotRangexp:
 		return
 	player.xp-=shotRangexp
-	player.shotRange += 20
+	player.shotRange += 13
 	shotRangexp += 2
 	UpdateTexts()
 

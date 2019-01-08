@@ -16,7 +16,7 @@ var xpReward =		1
 var stunDur =		0.5
 var iframeDur =		1
 var hitCounter =	5
-var maxProj =		5
+var maxProj =		4
 var projs =			0
 var rollDur =		0.5
 var rollCooldown =	1
@@ -33,6 +33,7 @@ var col
 var gui
 var aiReaction = 4
 onready var hpbar = find_node("HPBar")
+onready var audio = find_node("Audio")
 
 export(bool) var AI
 export(int) var maxSpeed
@@ -222,6 +223,8 @@ func Shoot():
 	var pos = shotSpawn[4+shootDir].global_position if sprite.flip_h else shotSpawn[1+shootDir].global_position
 	shot.global_position = pos - Vector2(damage,0) if sprite.flip_h else pos + Vector2(damage,0)
 	projectileParent.add_child(shot)
+	audio.pitch_scale = rand_range(damage-0.05,damage+0.05)
+	audio.play()
 	projs+=1
 	
 func GetHit(proj):
