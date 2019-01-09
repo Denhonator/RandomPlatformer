@@ -1,21 +1,19 @@
 extends StaticBody2D
 
-var col
-var vis
+onready var col = find_node("CollisionPolygon2D")
+onready var vis = find_node("Polygon2D")
 var original
 var dir = 20
 var length = 150
 var goal = 4000
-var noti
-var enemy
+onready var noti = find_node("VisibilityNotifier2D")
+onready var enemy = preload("res://Enemy.tscn")
 var level = 1
 var ecount = 0
+onready var spikes = preload("res://Spikes.tscn")
+var newSpikes = null
 
 func _ready():
-	col = find_node("CollisionPolygon2D")
-	vis = find_node("Polygon2D")
-	noti = find_node("VisibilityNotifier2D")
-	enemy = preload("res://Enemy.tscn")
 	col.polygon = vis.polygon
 	original = vis.polygon
 	seed(OS.get_system_time_secs())
@@ -31,10 +29,20 @@ func ContinuePlatform(i):
 	if prev.x>=goal:
 		return
 	var pol = vis.polygon
-	dir = rand_range(20,70) * dir/abs(dir)
-	length = rand_range(150,300)
-	if randi()%100>20:
+	if newSpikes:
 		dir = -dir
+		newSpikes = null
+		i = 1
+	else:
+		dir = rand_range(20,70) * dir/abs(dir)
+		if randi()%100>20:
+			dir = -dir
+		length = rand_range(150,300)
+		
+	if dir > 0 and randi()%100>50:
+		length = 80+level*10
+		newSpikes = spikes.instance()
+		newSpikes.damage = level*3
 	
 	if dir<0:	#up
 		pol.insert(index+1,Vector2(prev.x,prev.y+dir))
@@ -53,10 +61,13 @@ func ContinuePlatform(i):
 		pol.remove(pol.size()-1)
 		pol.remove(0)
 	
-	if i%2==1:
-		SpawnEnemy(prev.x>goal)
 	if randi()%20>16-level:
 		SpawnEnemy(false)
+	elif newSpikes:
+		newSpikes.position = pol[index+1]
+		get_parent().add_child(newSpikes)
+	elif i%2==1:
+		SpawnEnemy(prev.x>goal)
 
 	vis.polygon = pol
 	col.polygon = pol

@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://2D.gd" type="Script" id=1]
 [ext_resource path="res://StaticBody2D.gd" type="Script" id=2]
@@ -8,7 +8,6 @@
 [ext_resource path="res://bub.ogg" type="AudioStream" id=6]
 [ext_resource path="res://GUI.gd" type="Script" id=7]
 [ext_resource path="res://ARCADECLASSIC.TTF" type="DynamicFontData" id=8]
-[ext_resource path="res://100jam.ogg" type="AudioStream" id=9]
 
 [sub_resource type="RectangleShape2D" id=1]
 
@@ -71,7 +70,7 @@ use_filter = true
 font_data = ExtResource( 8 )
 _sections_unfolded = [ "Font", "Settings" ]
 
-[node name="Main" type="Node"]
+[node name="Main" type="Node" index="0"]
 
 script = ExtResource( 1 )
 
@@ -84,6 +83,7 @@ _sections_unfolded = [ "Transform" ]
 
 [node name="Platform" type="StaticBody2D" parent="Level" index="0"]
 
+editor/display_folded = true
 input_pickable = false
 collision_layer = 1
 collision_mask = 1
@@ -125,7 +125,7 @@ _sections_unfolded = [ "Transform" ]
 
 [node name="Polygon2D" type="Polygon2D" parent="Level/Platform" index="1"]
 
-polygon = PoolVector2Array( 0, 0, 510, 0, 510, 500, 0, 500 )
+polygon = PoolVector2Array( 0, 0, 510, 0, 510, 1000, 0, 1000 )
 uv = PoolVector2Array(  )
 color = Color( 0.546875, 0.546875, 0.546875, 1 )
 vertex_colors = PoolColorArray(  )
@@ -142,7 +142,7 @@ _sections_unfolded = [ "Transform" ]
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Level/Platform" index="2"]
 
 build_mode = 0
-polygon = PoolVector2Array( 0, 0, 510, 0, 510, 500, 0, 500 )
+polygon = PoolVector2Array( 0, 0, 510, 0, 510, 1000, 0, 1000 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="Player" type="Node2D" parent="." index="2"]
@@ -163,7 +163,7 @@ maxSpeed = 35
 shotSpeed = 3.0
 damage = 1.0
 health = 10
-shotCooldown = 0.5
+shotCooldown = 0.8
 shotRange = 100.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player/Body" index="0"]
@@ -176,8 +176,8 @@ _sections_unfolded = [ "Transform" ]
 
 scale = Vector2( 2, 2 )
 texture = ExtResource( 5 )
-hframes = 10
-frame = 6
+hframes = 11
+frame = 7
 _sections_unfolded = [ "Animation", "Material", "Offset", "Visibility" ]
 
 [node name="Camera2D" type="Camera2D" parent="Player/Body" index="2"]
@@ -186,10 +186,10 @@ position = Vector2( 63.4667, -0.688034 )
 anchor_mode = 1
 rotating = false
 current = true
-zoom = Vector2( 0.5, 0.5 )
+zoom = Vector2( 0.6, 0.6 )
 limit_left = -100
 limit_top = -10000000
-limit_right = 4200
+limit_right = 10000
 limit_bottom = 10000000
 limit_smoothed = false
 drag_margin_h_enabled = true
@@ -224,18 +224,28 @@ position = Vector2( 22.1926, -25.0273 )
 position = Vector2( 23.7467, 17.9 )
 _sections_unfolded = [ "Transform" ]
 
-[node name="ShotL" type="Position2D" parent="Player/Body/Shots" index="3"]
+[node name="ShotRLO" type="Position2D" parent="Player/Body/Shots" index="3"]
+
+position = Vector2( 26, 2.90832 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="ShotL" type="Position2D" parent="Player/Body/Shots" index="4"]
 
 position = Vector2( -27.3762, -6.0746 )
 
-[node name="ShotLD" type="Position2D" parent="Player/Body/Shots" index="4"]
+[node name="ShotLD" type="Position2D" parent="Player/Body/Shots" index="5"]
 
 position = Vector2( -24.1454, 17.9 )
 _sections_unfolded = [ "Transform" ]
 
-[node name="ShotLU" type="Position2D" parent="Player/Body/Shots" index="5"]
+[node name="ShotLU" type="Position2D" parent="Player/Body/Shots" index="6"]
 
 position = Vector2( -22.0813, -25.1774 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="ShotLLO" type="Position2D" parent="Player/Body/Shots" index="7"]
+
+position = Vector2( -26, 2.90832 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="Audio" type="AudioStreamPlayer" parent="Player/Body" index="4"]
@@ -250,7 +260,6 @@ bus = "Master"
 [node name="GUI" type="CanvasLayer" parent="." index="3"]
 
 pause_mode = 2
-editor/display_folded = true
 layer = 1
 offset = Vector2( 0, 0 )
 rotation = 0.0
@@ -375,9 +384,9 @@ material = SubResource( 5 )
 position = Vector2( 168.079, 12.0057 )
 scale = Vector2( 1.5, 1.5 )
 texture = ExtResource( 5 )
-hframes = 10
-frame = 7
-_sections_unfolded = [ "Material", "Transform", "Visibility" ]
+hframes = 11
+frame = 8
+_sections_unfolded = [ "Animation", "Material", "Transform", "Visibility" ]
 
 [node name="Menu" type="Control" parent="GUI" index="6"]
 
@@ -627,15 +636,6 @@ text = "Firerate"
 flat = false
 align = 0
 _sections_unfolded = [ "custom_fonts" ]
-
-[node name="Music" type="AudioStreamPlayer" parent="." index="4"]
-
-stream = ExtResource( 9 )
-volume_db = -6.0
-pitch_scale = 1.0
-autoplay = true
-mix_target = 0
-bus = "Master"
 
 [connection signal="screen_entered" from="Level/Platform/VisibilityNotifier2D" to="Level/Platform" method="_on_VisibilityNotifier2D_screen_entered"]
 

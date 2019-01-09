@@ -108,6 +108,7 @@ func _on_Movement_pressed():
 		return
 	player.xp-=movementxp
 	player.rollCooldown -= 0.1
+	player.maxJumpReserve += 10
 	player.maxSpeed += 5
 	movementxp += 2
 	UpdateTexts()
@@ -116,7 +117,7 @@ func _on_ShotSpeed_pressed():
 	if player.xp<shotSpeedxp:
 		return
 	player.xp-=shotSpeedxp
-	player.shotSpeed += 0.8
+	player.shotSpeed += 1.0
 	shotSpeedxp += 2
 	UpdateTexts()
 
@@ -124,7 +125,7 @@ func _on_Range_pressed():
 	if player.xp<shotRangexp:
 		return
 	player.xp-=shotRangexp
-	player.shotRange += 13
+	player.shotRange += 10
 	shotRangexp += 2
 	UpdateTexts()
 
@@ -132,7 +133,7 @@ func _on_Firerate_pressed():
 	if player.xp<fireratexp:
 		return
 	player.xp-=fireratexp
-	player.shotCooldown -= 0.07
+	player.shotCooldown -= 0.1
 	fireratexp += 2
 	UpdateTexts()
 

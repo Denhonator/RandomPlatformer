@@ -75,7 +75,7 @@ use_filter = false
 font_data = ExtResource( 3 )
 _sections_unfolded = [ "Font", "Settings" ]
 
-[node name="Enemy" type="KinematicBody2D" index="0"]
+[node name="Enemy" type="KinematicBody2D"]
 
 input_pickable = false
 collision_layer = 2
@@ -103,9 +103,8 @@ _sections_unfolded = [ "Transform", "Visibility" ]
 self_modulate = Color( 0.449219, 0, 0, 1 )
 scale = Vector2( 2, 2 )
 texture = ExtResource( 2 )
-flip_h = true
-hframes = 10
-frame = 6
+hframes = 11
+frame = 7
 _sections_unfolded = [ "Animation", "Offset", "Transform", "Visibility" ]
 
 [node name="Rays" type="Node2D" parent="." index="2"]
@@ -178,8 +177,6 @@ collision_mask = 1
 
 [node name="Shots" type="Node2D" parent="." index="3"]
 
-editor/display_folded = true
-
 [node name="ShotR" type="Position2D" parent="Shots" index="0"]
 
 position = Vector2( 27.7002, -6.0746 )
@@ -193,18 +190,28 @@ position = Vector2( 22.1926, -25.0273 )
 position = Vector2( 23.7467, 17.9 )
 _sections_unfolded = [ "Transform" ]
 
-[node name="ShotL" type="Position2D" parent="Shots" index="3"]
+[node name="ShotRLO" type="Position2D" parent="Shots" index="3"]
+
+position = Vector2( 26, 2.85466 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="ShotL" type="Position2D" parent="Shots" index="4"]
 
 position = Vector2( -27.3762, -6.0746 )
 
-[node name="ShotLD" type="Position2D" parent="Shots" index="4"]
+[node name="ShotLD" type="Position2D" parent="Shots" index="5"]
 
 position = Vector2( -24.1454, 17.9 )
 _sections_unfolded = [ "Transform" ]
 
-[node name="ShotLU" type="Position2D" parent="Shots" index="5"]
+[node name="ShotLU" type="Position2D" parent="Shots" index="6"]
 
 position = Vector2( -22.0813, -25.1774 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="ShotLLO" type="Position2D" parent="Shots" index="7"]
+
+position = Vector2( -26, 2.85466 )
 _sections_unfolded = [ "Transform" ]
 
 [node name="HPBar" type="ProgressBar" parent="." index="4"]
