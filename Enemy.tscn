@@ -75,7 +75,7 @@ use_filter = false
 font_data = ExtResource( 3 )
 _sections_unfolded = [ "Font", "Settings" ]
 
-[node name="Enemy" type="KinematicBody2D"]
+[node name="Enemy" type="KinematicBody2D" index="0"]
 
 input_pickable = false
 collision_layer = 2
@@ -242,7 +242,7 @@ value = 51.0
 exp_edit = false
 rounded = false
 percent_visible = true
-_sections_unfolded = [ "Percent", "custom_styles" ]
+_sections_unfolded = [ "Percent", "custom_fonts" ]
 
 [node name="Audio" type="AudioStreamPlayer2D" parent="." index="5"]
 

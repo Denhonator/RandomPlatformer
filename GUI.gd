@@ -8,6 +8,7 @@ onready var level = find_node("Level")
 onready var distance = find_node("Distance")
 onready var time = find_node("Time")
 onready var roll = find_node("RollIcon")
+onready var special = find_node("Special")
 onready var menu = find_node("Menu")
 onready var health = find_node("Health")
 onready var damage = find_node("Damage")
@@ -23,7 +24,7 @@ var movementxp = 4
 var shotSpeedxp = 4
 var shotRangexp = 4
 var fireratexp = 4
-var action = ["left","right","up","down","attack","jump","roll"]
+var action = ["left","right","up","down","attack","jump","roll","special"]
 var bindCooldown = 0
 
 func _ready():
@@ -38,6 +39,7 @@ func UpdateTexts():
 	shotSpeed.text = "Shot Speed: "+String(shotSpeedxp)
 	shotRange.text = "Range: "+String(shotRangexp)
 	firerate.text = "Firerate: "+String(fireratexp)
+	special.text = String(player.special)
 	XP.text = String(player.xp)+"XP"
 	HP.text = String(player.health)+"HP"
 	playerref = weakref(player)
@@ -91,7 +93,7 @@ func _on_Health_pressed():
 	if player.xp<healthxp:
 		return
 	player.xp-=healthxp
-	player.health += 2+healthxp/2
+	player.health += 2+healthxp/4
 	healthxp += 2
 	UpdateTexts()
 
@@ -107,9 +109,9 @@ func _on_Movement_pressed():
 	if player.xp<movementxp:
 		return
 	player.xp-=movementxp
-	player.rollCooldown -= 0.1
+	player.rollCooldown *= 0.9
 	player.maxJumpReserve += 10
-	player.maxSpeed += 5
+	player.maxSpeed += 2
 	movementxp += 2
 	UpdateTexts()
 
@@ -133,7 +135,7 @@ func _on_Firerate_pressed():
 	if player.xp<fireratexp:
 		return
 	player.xp-=fireratexp
-	player.shotCooldown -= 0.1
+	player.shotCooldown *= 0.9
 	fireratexp += 2
 	UpdateTexts()
 

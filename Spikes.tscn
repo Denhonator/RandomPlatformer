@@ -8,7 +8,7 @@
 custom_solver_bias = 0.0
 extents = Vector2( 13.8693, 10 )
 
-[node name="Spikes" type="Area2D"]
+[node name="Spikes" type="Area2D" index="0"]
 
 z_index = -1
 input_pickable = true
@@ -23,8 +23,8 @@ _sections_unfolded = [ "Transform", "Z Index" ]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." index="0"]
 
-position = Vector2( 57.6633, -7.8051 )
-scale = Vector2( 5.73866, 0.751032 )
+position = Vector2( 57.6633, -2.6632 )
+scale = Vector2( 5.73866, 0.320911 )
 shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="." index="1"]
