@@ -70,7 +70,7 @@ use_filter = true
 font_data = ExtResource( 8 )
 _sections_unfolded = [ "Font", "Settings" ]
 
-[node name="Main" type="Node" index="0"]
+[node name="Main" type="Node"]
 
 script = ExtResource( 1 )
 
@@ -176,7 +176,7 @@ _sections_unfolded = [ "Transform" ]
 
 scale = Vector2( 2, 2 )
 texture = ExtResource( 5 )
-hframes = 11
+hframes = 12
 frame = 7
 _sections_unfolded = [ "Animation", "Material", "Offset", "Visibility" ]
 
@@ -406,7 +406,7 @@ material = SubResource( 5 )
 position = Vector2( 299.19, 14.3222 )
 scale = Vector2( 1.5, 1.5 )
 texture = ExtResource( 5 )
-hframes = 11
+hframes = 12
 frame = 8
 _sections_unfolded = [ "Animation", "Material", "Transform", "Visibility" ]
 

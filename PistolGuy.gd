@@ -21,7 +21,7 @@ var rollDur =		0.5
 var rollCooldown =	1
 var special =		10
 var specialCooldown = 0.7
-var specialCounter = 0
+var specialCounter = 0.7
 var rollCounter
 var jumpReserve
 var sprite
@@ -57,6 +57,7 @@ enum Ani{
 	ROLL1= 8
 	ROLL2= 9
 	ROLL3= 10
+	THROW= 11
 	}
 
 func _ready():
@@ -237,7 +238,7 @@ func Shoot(bomb):
 		shot.scale *= 2
 		shot.vel.x = 80+abs(vel.x)
 		shot.vel.y = -180+vel.y/3
-		pos = shotSpawn[5].global_position if sprite.flip_h else shotSpawn[1].global_position
+		pos = shotSpawn[4].global_position if sprite.flip_h else shotSpawn[0].global_position
 	else:
 		shot.vel.x = 50*(shotSpeed+0.1)/damage
 		if abs(shootDir)==1:	#diagonal
@@ -299,6 +300,9 @@ func RunAni(x, delta):
 			sprite.frame = Ani.ROLL2
 		else:
 			sprite.frame = Ani.ROLL3
+		return
+	elif specialCounter<0.4:
+		sprite.frame = Ani.THROW
 		return
 	if shootDir == -1:
 		if shotAni or x:
